@@ -1090,6 +1090,7 @@
         <attribute name="Implementation-Version" value="${project.revision}.${build.id}" />
         <attribute name="Implementation-Vendor" value="${impl.vendor}" />
         <attribute name="Implementation-ProductID" value="${impl.productID}" />
+        <attribute name="Main-Class" value="${main.class}" />
       </manifest>
       <fileset dir="${classes.dir}" />
     </jar>
