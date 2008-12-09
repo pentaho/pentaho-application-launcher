@@ -239,6 +239,9 @@
     <fileset dir="${lib.dir}">
       <include name="*.jar" />
     </fileset>
+    <fileset dir="${devlib.dir}">
+      <include name="*" />
+    </fileset>
     <fileset dir="${testlib.dir}">
       <include name="*.jar" />
     </fileset>
@@ -686,7 +689,7 @@
         repository. 
         ====================================================================-->
   <target name="publish-pentaho"
-          depends="dist, publish-pentaho-nojar"
+          depends="dist, dist-source, publish-pentaho-nojar"
           description="Builds and publishes the jar file to a Maven2 repository">
   </target>
 
@@ -1090,7 +1093,6 @@
         <attribute name="Implementation-Version" value="${project.revision}.${build.id}" />
         <attribute name="Implementation-Vendor" value="${impl.vendor}" />
         <attribute name="Implementation-ProductID" value="${impl.productID}" />
-        <attribute name="Main-Class" value="${main.class}" />
       </manifest>
       <fileset dir="${classes.dir}" />
     </jar>
