@@ -1,139 +1,30 @@
-<!--
-<!DOCTYPE project PUBLIC "-//ANT//DTD project//EN" "ant.dtd">
--->
-<!-- An ANT build file for Launcher                                  -->
-<!--                                                                 -->
-<!-- To run this script, you need to make sure the libraries used by -->
-<!-- Pixie are copied to the ../lib directory (or edit the           -->
-<!-- init-general task to point to the appropriate jar files).       -->
-<!--                                                                 -->
-<!-- This script will create temporary directories ../build and      -->
-<!-- ../distribution, as working areas.  A ../javadoc directory will -->
-<!-- be created for the Javadoc HTML pages.                          -->
-<!--                                                                 -->
+<!--===========================================================================
+  This is the build file for the launcher project.
+  
+  This build file will use the common_build.xml file as the default build
+  process and should only override the tasks that need to differ from
+  the common build file.
+  
+  See common_build.xml for more details
+============================================================================-->
+<project name="launcher" basedir="." default="jar">
+	
+	<description>
+	  This build file is used to create the API project
+		and works with the common_build.xml file.
+	</description>
 
-<project name="launcher" default="all" basedir=".">
+	<!-- Define the default location of the common build file -->
+	<property name="common.build.file" value="./common_build.xml" 
+		description="This is the location of the standardized common_build.xml file"/>
 
-  <import file="ant/build-lib.xml"/>
+	<!-- Import the common_build.xml file which contains all the default tasks -->
+	<import file="${common.build.file}"/>
 
-  <target name="init">
+    <!--
+      AS STATED ABOVE, THE ONLY TASKS THAT SHOULD EXIST IN THIS BUILD FILE ARE
+      THE TASKS THAT NEED TO DIFFER FROM THE DEFAULT IMPLEMENTATION OF THE TASKS
+      FOUND IN common_build.xml.
+    --> 
 
-    <tstamp/>
-
-    <property name="builddir" value="build"/>
-
-    <property file="${user.home}/.build-pentaho-commons-launcher.properties"/>
-    <property file="build.properties"/>
-  </target>
-
-  <target name="compile" depends="init">
-    <echo>Building Launcher-JAR</echo>
-
-    <build-all source-dir="source"
-               target-jar="${launcher-jar-file}">
-      <all-resources>
-        <include name="*.properties"/>
-        <include name="**/*.properties"/>
-      </all-resources>
-      <jar-args>
-        <manifest>
-          <attribute name="Implementation-Title" value="${launcher.name}"/>
-          <attribute name="Implementation-Version" value="${launcher.version}"/>
-          <attribute name="Implementation-Vendor" value="${launcher.vendor}"/>
-          <attribute name="Main-Class" value="org.pentaho.commons.launcher.Launcher"/>
-        </manifest>
-      </jar-args>
-    </build-all>
-  </target>
-
-
-  <target name="compile-retro" depends="init"
-    description="Compile the Launcher source code using a custom JIKES setup.">
-
-    <build-retro target-jar="${launcher-jar-file}"
-                 source-dir="source"
-                 jdk-dir="${build.retro.jdk}">
-      <all-resources>
-        <include name="*.properties"/>
-        <include name="**/*.properties"/>
-      </all-resources>
-      <jar-args>
-        <manifest>
-          <attribute name="Implementation-Title" value="${launcher.name}"/>
-          <attribute name="Implementation-Version" value="${launcher.version}"/>
-          <attribute name="Implementation-Vendor" value="${launcher.vendor}"/>
-          <attribute name="Main-Class" value="org.pentaho.commons.launcher.Launcher"/>
-        </manifest>
-      </jar-args>
-    </build-retro>
-  </target>
-
-
-  <!-- Generate the Launcher JavaDoc HTML pages -->
-  <!-- Dont expect too much yet, as most classes are still undocumented -->
-  <target name="javadoc" depends="init">
-    <delete dir="javadoc"/>
-    <mkdir dir="javadoc"/>
-    <javadoc destdir="javadoc"
-      windowtitle="Launcher Library"
-      overview="source/overview.html">
-      <packageset dir="source" defaultexcludes="yes">
-        <include name="org/pentaho/commons/launcher/**"/>
-      </packageset>
-    </javadoc>
-  </target>
-
-  <target name="fill-dist-dir">
-
-    <!-- copy across README -->
-    <copy file="README.txt"
-      tofile="${dist-dir}/README.txt" failonerror="false"/>
-
-    <!-- copy across LICENSE -->
-    <copy file="license.txt"
-      tofile="${dist-dir}/license.txt"/>
-
-    <!-- copy across ChangeLog -->
-    <copy file="ChangeLog.txt" tofile="${dist-dir}/ChangeLog.txt"/>
-
-    <!-- copy across runtime jar file -->
-    <copy file="${launcher-jar-file}" tofile="${dist-dir}/${launcher-jar-file}"/>
-
-    <!-- copy across source files -->
-    <copy todir="${dist-dir}/source">
-      <fileset dir="source"/>
-    </copy>
-
-    <!-- copy across lib files -->
-    <copy todir="${dist-dir}/lib" failonerror="false">
-      <fileset dir="lib"/>
-    </copy>
-
-    <!-- copy across ant build file (this file) -->
-    <copy file="build.xml"
-      tofile="${dist-dir}/build.xml"/>
-    <copy file="ant/build-lib.xml"
-      tofile="${dist-dir}/ant/build-lib.xml"/>
-
-    <copy file="build.properties"
-      tofile="${dist-dir}/build.properties"/>
-  </target>
-
-
-  <!-- Make .zip distribution for libfonts -->
-  <target name="make-zip" depends="compile">
-
-    <make-zip lib.version="${launcher.version}" lib.name="${launcher.name}"/>
-
-  </target>
-
-  <!-- Make .tar.gz distribution for libfonts -->
-  <target name="make-targz" depends="compile">
-
-    <make-targz lib.version="${launcher.version}" lib.name="${launcher.name}"/>
-
-  </target>
-
-  <target name="all" depends="init, compile, javadoc, make-zip, make-targz"/>
 </project>
-
