@@ -69,7 +69,7 @@ public class Launcher {
       final File file = new File(appDir, path);
       if (file.exists() && file.canRead()) {
         try {
-          jars.add(file.toURL());
+          jars.add(file.toURI().toURL());
         } catch (Exception e) {
           System.err
               .println("Invalid classpath entry, ignoring '" + path + "'");
@@ -121,7 +121,7 @@ public class Launcher {
       final File file = files[i];
       if (file.exists() && file.canRead()) {
         try {
-          list.add(file.toURL());
+          list.add(file.toURI().toURL());
         } catch (Exception e) {
           System.err
               .println("Invalid classpath entry, ignoring '" + path + "'");
