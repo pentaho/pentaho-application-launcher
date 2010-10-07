@@ -9,6 +9,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.lang.reflect.Method;
@@ -22,19 +23,42 @@ import java.lang.reflect.Method;
  * @noinspection AssignmentToForLoopParameter
  */
 public class Launcher {
+  private static final String JAR_SUFFIX = ".jar";
+  private static final String ZIP_SUFFIX = ".zip";
+
   private static class JarFilter implements FileFilter {
-    private static final String JAR_SUFFIX = ".jar";
-    private static final String ZIP_SUFFIX = ".zip";
 
     private JarFilter() {
     }
 
     public boolean accept(final File pathname) {
       final String base = pathname.getName();
-      return (base.regionMatches(true, base.length() - JAR_SUFFIX.length(),
-          JAR_SUFFIX, 0, JAR_SUFFIX.length()) || base.regionMatches(true, base
-          .length()
-          - ZIP_SUFFIX.length(), ZIP_SUFFIX, 0, ZIP_SUFFIX.length()));
+      return (endsWithIgnoreCase(base, JAR_SUFFIX) || endsWithIgnoreCase(base, ZIP_SUFFIX));
+    }
+  }
+
+  private static class LookupParser extends PropertyLookupParser
+  {
+    private File applicationDirectory;
+
+    private LookupParser(final File applicationDirectory)
+    {
+      this.applicationDirectory = applicationDirectory;
+    }
+
+    /**
+     * Looks up the property with the given name.
+     *
+     * @param property the name of the property to look up.
+     * @return the translated value.
+     */
+    protected String lookupVariable(final String property)
+    {
+      if (property.equals("SYS:APP_DIR"))
+      {
+        return applicationDirectory.getAbsolutePath();
+      }
+      return System.getenv(property);
     }
   }
 
@@ -61,7 +85,7 @@ public class Launcher {
 
     final File configurationFile = new File(appDir, "launcher.properties");
 
-    parseConfiguration(configurationFile);
+    parseConfiguration(configurationFile, appDir);
 
     final ArrayList jars = new ArrayList();
     for (int i = 0; i < classpath.size(); i++) {
@@ -132,7 +156,8 @@ public class Launcher {
     }
   }
 
-  private static void parseConfiguration(final File configuration) {
+  private static void parseConfiguration(final File configuration,
+                                         final File applicationDirectory) {
     try {
       final Properties p = new Properties();
       final InputStream in = new BufferedInputStream(new FileInputStream(
@@ -149,6 +174,26 @@ public class Launcher {
       debug = "true".equals(p.getProperty("debug"));
       parsePath(p.getProperty("libraries"), libraries, ":");
       parsePath(p.getProperty("classpath"), classpath, ":");
+
+      final LookupParser parser = new LookupParser(applicationDirectory);
+      final Enumeration keys = p.keys();
+      while (keys.hasMoreElements())
+      {
+        final String key = (String) keys.nextElement();
+        if (key.startsWith("system-property.") == false)
+        {
+          continue;
+        }
+        final String propertyName = key.substring("system-property.".length());
+        final String propertyValue = p.getProperty(key);
+        final String translatedValue = parser.translateAndLookup(propertyValue);
+        System.setProperty(propertyName, translatedValue);
+      }
+
+      if ("true".equals(p.getProperty("uninstall-security-manager", "false")))
+      {
+        System.setSecurityManager(null);
+      }
     } catch (Exception e) {
       // Ignore any error here ..
     }
@@ -200,8 +245,7 @@ public class Launcher {
     }
   }
 
-  private static File computeApplicationDir(final URL location,
-      final File defaultDir) {
+  private static File computeApplicationDir(final URL location, final File defaultDir) {
     if (location == null) {
       System.err
           .println("Warning: Cannot locate the program directory. Assuming default.");
@@ -215,7 +259,7 @@ public class Launcher {
     }
 
     final String file = location.toExternalForm();
-    if (file.endsWith(".jar") || file.endsWith(".zip")) {
+    if (endsWithIgnoreCase(file, JAR_SUFFIX) || endsWithIgnoreCase(file, ZIP_SUFFIX)) {
       try {
         return new File(location.toURI()).getParentFile();
       } catch (URISyntaxException e) {
@@ -228,5 +272,14 @@ public class Launcher {
         return new File(location.getFile());
       }
     }
+  }
+
+  public static boolean endsWithIgnoreCase(final String base, final String end)
+  {
+    if (base.length() < end.length())
+    {
+      return false;
+    }
+    return base.regionMatches(true, base.length() - end.length(), end, 0, end.length());
   }
 }
