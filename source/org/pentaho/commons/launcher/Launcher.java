@@ -17,7 +17,7 @@ import java.lang.reflect.Method;
 /**
  * Laucher for Java classes. Allows to modify the classpath at runtime instead
  * of relying on the jar-mechanism.
- * 
+ *
  * @author Thomas Morgner
  * @noinspection UseOfSystemOutOrSystemErr
  * @noinspection AssignmentToForLoopParameter
@@ -187,7 +187,10 @@ public class Launcher {
         final String propertyName = key.substring("system-property.".length());
         final String propertyValue = p.getProperty(key);
         final String translatedValue = parser.translateAndLookup(propertyValue);
-        System.setProperty(propertyName, translatedValue);
+        if (translatedValue != null && "".equals(translatedValue) == false)
+        {
+          System.setProperty(propertyName, translatedValue);
+        }
       }
 
       if ("true".equals(p.getProperty("uninstall-security-manager", "false")))

@@ -286,14 +286,7 @@ public abstract class PropertyLookupParser implements Serializable
                                       final String columnName)
   {
     final String s = lookupVariable(columnName);
-    if (s == null)
-    {
-      result.append(markerChar);
-      result.append(openingBraceChar);
-      result.append(columnName);
-      result.append(closingBraceChar);
-    }
-    else
+    if (s != null)
     {
       result.append(s);
     }
