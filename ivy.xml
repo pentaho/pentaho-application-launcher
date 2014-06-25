@@ -15,5 +15,7 @@
 
 	<dependencies defaultconf="default->default">
 	  <!-- this project currently has no dependencies -->
+    <dependency org="junit"               name="junit"         rev="4.11"     conf="test->default" transitive="false"/>
+    <dependency org="org.mockito"         name="mockito-all"   rev="1.9.5"   conf="test->default" transitive="false" />
 	</dependencies>
 </ivy-module>
