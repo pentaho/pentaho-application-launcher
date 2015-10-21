@@ -12,12 +12,13 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2002-2014 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2002-2015 Pentaho Corporation..  All rights reserved.
  */
 
 package org.pentaho.commons.launcher.property;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -62,6 +63,42 @@ public class PropertyLookupParserTest {
     when( mockPropertyGetter.getProperty( property ) ).thenReturn( varValue );
     when( mockPropertyGetter.getProperty( property2 ) ).thenReturn( varValue2 );
     assertEquals( varValue + "$/" + varValue2, propertyLookupParser.translateAndLookup( "${" + property + "}\\$/${"
-        + property2 + "}" ) );
+      + property2 + "}" ) );
+  }
+
+  @Test
+  public void testGetSetOpeningBraceChar() {
+    assertEquals( '{', propertyLookupParser.getOpeningBraceChar() );
+    propertyLookupParser.setOpeningBraceChar( '[' );
+    assertEquals( '[', propertyLookupParser.getOpeningBraceChar() );
+  }
+
+  @Test
+  public void testGetSetClosingBraceChar() {
+    assertEquals( '}', propertyLookupParser.getClosingBraceChar() );
+    propertyLookupParser.setClosingBraceChar( ']' );
+    assertEquals( ']', propertyLookupParser.getClosingBraceChar() );
+  }
+
+  @Test
+  public void testGetSetEscapeChar() {
+    assertEquals( '\\', propertyLookupParser.getEscapeChar() );
+    propertyLookupParser.setEscapeChar( ']' );
+    assertEquals( ']', propertyLookupParser.getEscapeChar() );
+  }
+
+  @Test
+  public void testGetSetMarkerChar() {
+    assertEquals( '$', propertyLookupParser.getMarkerChar() );
+    propertyLookupParser.setMarkerChar( ']' );
+    assertEquals( ']', propertyLookupParser.getMarkerChar() );
+  }
+
+  @Test
+  public void testTranslateAndLookupNullValue() {
+    assertNull( propertyLookupParser.translateAndLookup( null ) );
+    assertEquals( "${", propertyLookupParser.translateAndLookup( "${" ) );
+    assertEquals( "$}", propertyLookupParser.translateAndLookup( "$}" ) );
+
   }
 }
