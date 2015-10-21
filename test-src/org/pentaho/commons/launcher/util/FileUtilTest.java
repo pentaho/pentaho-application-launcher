@@ -12,12 +12,14 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2002-2014 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2002-2015 Pentaho Corporation..  All rights reserved.
  */
 
 package org.pentaho.commons.launcher.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -31,6 +33,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -46,6 +49,12 @@ public class FileUtilTest {
   }
 
   @Test
+  public void testDefaultConstructor() {
+    // This util class does not privatize the constructor, the test is simply to create a new object
+    new FileUtil();
+  }
+
+  @Test
   public void testComputeApplicationDirCantLocateDirWarning() {
     File defaultFile = new File( UUID.randomUUID().toString() );
     assertEquals( defaultFile, FileUtil.computeApplicationDir( null, defaultFile, mockPrintStream ) );
@@ -56,7 +65,7 @@ public class FileUtilTest {
   public void testComputeApplicationDirUnrecognizedFileTypeWarning() throws MalformedURLException {
     File expectedFile = new File( "." );
     assertEquals( expectedFile, FileUtil.computeApplicationDir( new URL( "http://www.google.com" ), null,
-        mockPrintStream ) );
+      mockPrintStream ) );
     verify( mockPrintStream ).println( FileUtil.UNRECOGNIZED_FILE_TYPE_WARNING );
   }
 
@@ -77,8 +86,18 @@ public class FileUtilTest {
   }
 
   @Test
+  public void testComputeApplicationDirUriSyntaxException() throws MalformedURLException, URISyntaxException {
+    assertNotNull( FileUtil.computeApplicationDir( new URL( "file:// " ), new File( "." ), mockPrintStream ) );
+  }
+
+  @Test
   public void testPopulateLibrariesNoPaths() {
     assertEquals( 0, FileUtil.populateLibraries( new ArrayList<String>(), null, null ).size() );
+  }
+
+  @Test
+  public void testPopulateLibrariesWithPaths() {
+    assertTrue( FileUtil.populateLibraries( Collections.singletonList( "test-lib" ), null, null ).size() > 0 );
   }
 
   @Test
@@ -98,7 +117,7 @@ public class FileUtilTest {
     when( invalidFile.toURI() ).thenThrow( new RuntimeException( exception ) );
     assertEquals( 0, FileUtil.fileListToURLList( files, mockPrintStream ).size() );
     verify( mockPrintStream ).println(
-        eq( "Invalid entry, ignoring '" + invalidFile.getAbsolutePath() + "':" + exception ) );
+      eq( "Invalid entry, ignoring '" + invalidFile.getAbsolutePath() + "':" + exception ) );
   }
 
   @Test
