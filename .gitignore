@@ -1,4 +1,5 @@
 bin/
+target/
 dist/
 js-lib/
 lib/
@@ -11,6 +12,7 @@ testdata.script
 .classpath
 .project
 .DS_Store
+.idea
 projects/
 plugins/
 build-res/dojo-*
