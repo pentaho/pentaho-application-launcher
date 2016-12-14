@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2002-2015 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2002-2016 Pentaho Corporation..  All rights reserved.
  */
 
 package org.pentaho.commons.launcher.util;
@@ -97,7 +97,8 @@ public class FileUtilTest {
 
   @Test
   public void testPopulateLibrariesWithPaths() {
-    assertTrue( FileUtil.populateLibraries( Collections.singletonList( "test-lib" ), null, null ).size() > 0 );
+    assertTrue( FileUtil.populateLibraries(
+      Collections.singletonList( "src/test/resources/test-lib-folder" ), null, null ).size() > 0 );
   }
 
   @Test

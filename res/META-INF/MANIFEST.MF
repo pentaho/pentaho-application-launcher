@@ -1,5 +1,0 @@
-Implementation-Title: Pentaho Application Launcher
-Implementation-Version: TRUNK-SNAPSHOT
-Implementation-Vendor: Pentaho Corporation
-Implementation-ProductID: 
-Main-Class: org.pentaho.commons.launcher.Launcher
