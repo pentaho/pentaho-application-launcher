@@ -24,13 +24,13 @@
     <developerConnection>scm:git:git@github.com:pentaho/pentaho-application-launcher.git</developerConnection>
   </scm>
   <properties>
-    <mockito-all.version>1.9.5</mockito-all.version>
+    <mockito.version>5.10.0</mockito.version>
   </properties>
   <dependencies>
     <dependency>
       <groupId>org.mockito</groupId>
-      <artifactId>mockito-all</artifactId>
-      <version>${mockito-all.version}</version>
+      <artifactId>mockito-core</artifactId>
+      <version>${mockito.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
