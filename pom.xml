@@ -9,7 +9,7 @@
   </parent>
   <groupId>pentaho</groupId>
   <artifactId>pentaho-application-launcher</artifactId>
-  <version>11.0.0.0-latest</version>
+  <version>11.0.0.0-SNAPSHOT</version>
   <name>Pentaho Application Launcher</name>
   <description></description>
   <licenses>
