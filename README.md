@@ -1,4 +1,4 @@
-# Hitachi Vantara Application Launcher #
+# Pentaho Application Launcher #
  
 
 How to build
